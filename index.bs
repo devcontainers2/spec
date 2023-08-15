@@ -35,14 +35,9 @@ An <dfn export>development environment</dfn> is defined as a logical instance of
 
 # Configuring a Dev Container # {#configuring}
 
-The <dfn export><code>devcontainer.json</code></dfn> file contains any needed metadata and settings required to
-configurate a [=development container=] for a given well-defined tool and runtime stack. It can be used by [tools and
-services that support the dev container spec](supporting-tools.md) to create a **development environment** that contains
-one or more **development containers**.
+The <dfn export>`devcontainer.json`</dfn> file contains any needed metadata and settings required to configure a [=development container=] for a given well-defined tool and runtime stack. It can be used by [tools and services that support the dev container spec](#supporting-tools) to create a [=development environment=] that contains one or more [=development containers=].
 
-Metadata properties marked with a 🏷️ can be stored in the <dfn export>devcontainer.metadata</dfn> container image label
-in addition to <code>devcontainer.json</code>. This label can contain an array of json snippets that will be
-automatically merged with `devcontainer.json` contents (if any) when a container is created.
+Metadata properties marked with a 🏷️ can be stored in the <dfn export>`devcontainer.metadata`</dfn> container image label in addition to `devcontainer.json`. This label can contain an array of json snippets that will be automatically merged with `devcontainer.json` contents (if any) when a container is created.
 
 <div class=example>
 
