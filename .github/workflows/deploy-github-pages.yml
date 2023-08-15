@@ -6,7 +6,6 @@ on:
       - README.md
       - LICENSE
       - .gitignore
-      - CODEOWNERS
       - CONTRIBUTING.md
       - LICENSE
   workflow_dispatch:

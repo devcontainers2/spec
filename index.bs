@@ -1,0 +1,76 @@
+<pre class='metadata'>
+Title: Development Containers
+Abstract: A Development Container (or Dev Container for short) allows you to use a container as a full-featured
+Abstract: development environment. It can be used to run an application, to separate tools, libraries, or runtimes
+Abstract: needed for working with a codebase, and to aid in continuous integration and testing. Dev containers can be
+Abstract: run locally or remotely, in a private or public cloud, in a variety of supporting tools and editors.
+Status: LD
+Shortname: devcontainers
+Repository: devcontainers-community/devcontainers.org
+Favicon: https://avatars.githubusercontent.com/u/102692984?s=200&v=4
+URL: https://devcontainers.org/spec/
+Editor: Samruddhi Khandale, Microsoft, https://github.com/samruddhikhandale
+Editor: Brigit Murtaugh, Microsoft, https://github.com/bamurtaugh
+Editor: Josh Spicer, Microsoft, https://github.com/joshspicer
+Former Editor: Edmundo Gonzalez, Microsoft, https://github.com/edgonmsft
+Markup Shorthands: markdown yes, css no
+Complain About: accidental-2119 no, missing-example-ids no
+Warning: custom
+Text Macro: CUSTOMWARNINGTITLE Current version is <a href=https://containers.dev/implementors/spec/>https://containers.dev/implementors/spec/</a>
+</pre>
+
+<div boilerplate=copyright>
+<!-- https://creativecommons.org/choose/results-one?license_code=by&jurisdiction=&version=4.0&lang=en -->
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img no-autosize alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png"></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+</div>
+
+# Introduction # {#intro}
+
+The purpose of the development container specification is to provide a way to enrich containers with the content and
+metadata necessary to enable development inside them. These container environments should be easy to use, create, and
+recreate.
+
+A development container is a container in which a user can develop an application. Tools that want to implement this
+specification should provide a set of features/commands that give more flexibility to users and allow development
+containers to scale to large development groups.
+
+An environment is defined as a logical instance of one or more development containers, along with any needed side-car
+containers. An environment is based on one set of metadata that can be managed as a single unit. Users can create
+multiple environments from the same configuration metadata for different purposes.
+
+<div class=example>
+
+Here's an example of a Development Container configuration and a screenshot of it being used:
+
+```json
+// devcontainer.json
+{
+  "image": "ghcr.io/octocat/my-base-image",
+  "features": {
+    "ghcr.io/octocat/features/my-awesome-feature": {
+      "superhero": true
+    }
+  }
+}
+```
+
+<img no-autosize style="width: 100%; max-width: 700px;" src="https://i.imgur.com/Kl9y4xt.png">
+
+</div>
+
+Development containers allow one to define a repeatable development environment for a user or team of developers that
+includes the execution environment the application needs. A development container defines an environment in which you
+develop your application before you are ready to deploy. While deployment and development containers may resemble one
+another, you may not want to include tools in a deployment image that you use during development and you may need to use
+different secrets or other settings.
+
+Furthermore, working inside a development container can require additional metadata to drive tooling or service
+experiences than you would normally need with a production container. Providing a structured and consistent form for
+this metadata is a core part of this specification.
+
+A <dfn export>development container</dfn> is composed of a definition (e.g. contained in a devcontainer.json file) that
+deterministically creates containers under the control of the user.
+
+<pre class=include>path: configuring.bs</pre>
+<pre class=include>path: features.bs</pre>
+<pre class=include>path: supporting-tools.bs</pre>
