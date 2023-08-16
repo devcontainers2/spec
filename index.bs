@@ -10,6 +10,7 @@ Editor: Samruddhi Khandale, Microsoft, https://github.com/samruddhikhandale
 Editor: Brigit Murtaugh, Microsoft, https://github.com/bamurtaugh
 Editor: Josh Spicer, Microsoft, https://github.com/joshspicer
 Former Editor: Edmundo Gonzalez, Microsoft, https://github.com/edgonmsft
+!Participate: <a href="https://github.com/devcontainers/feature-starter">Create your own Dev Container Feature collection</a>
 Markup Shorthands: markdown yes
 Complain About: accidental-2119 no, missing-example-ids no
 Warning: custom
