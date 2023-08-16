@@ -3,7 +3,7 @@
 💻 Formal specification for Development Containers
 
 <p align=center>
-  <img src="https://i.imgur.com/gGOKNZC.png">
+  <img width=600 src="https://i.imgur.com/gGOKNZC.png">
 </p>
 
 👀 You might be looking for [devcontainers.org/spec]. 😉
