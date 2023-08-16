@@ -22,7 +22,7 @@ Text Macro: CUSTOMWARNINGTITLE Current version is <a href=https://containers.dev
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img no-autosize alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png"></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 </div>
 
-# Dev container specification # {#Dev-container-specification}
+# Dev container specification # {#dev-container-specification}
 
 The purpose of the **development container** specification is to provide a way to enrich containers with the content and metadata necessary to enable development inside them. These container **environments** should be easy to use, create, and recreate.
 
@@ -30,7 +30,7 @@ A **development container** is a container in which a user can develop an applic
 
 An **environment** is defined as a logical instance of one or more **development containers**, along with any needed side-car containers. An environment is based on one set of metadata that can be managed as a single unit. Users can create multiple **environments** from the same configuration metadata for different purposes.
 
-# Metadata # {#Metadata}
+# Metadata # {#metadata}
 
 **Development containers** allow one to define a repeatable development environment for a user or team of developers that includes the execution environment the application needs. A development container defines an environment in which you develop your application before you are ready to deploy. While deployment and development containers may resemble one another, you may not want to include tools in a deployment image that you use during development and you may need to use different secrets or other settings.
 
@@ -46,7 +46,7 @@ While the structure of this metadata is critical, it is also important to call o
 
 It is valid that these files may exist in more than one location, so consider providing a mechanism for users to select one when appropriate.
 
-## Image Metadata ## {#Image-Metadata}
+## Image Metadata ## {#image-metadata}
 
 Certain dev container metadata properties can be stored in an image label as an array of metadata snippets. This allows them to be stored in prebuilt images, such that, the image and its related configuration are self-contained. These contents should then be merged with any local devcontainer.json file contents at the time the container is created. An array is used so subsequent image builds can simply append changes to the array rather than attempting to merge at that point - which improves compatibility with arbitrary image build systems.
 
@@ -76,7 +76,7 @@ To simplify adding this metadata for other tools, we also support having a singl
 
 The metadata is added to the image as a `devcontainer.metadata` label with a JSON string value representing the above array or single object.
 
-### Merge Logic ### {#Merge-Logic}
+### Merge Logic ### {#merge-logic}
 
 To apply the metadata together with a user's devcontainer.json at runtime the following merge logic by property is used. The table also notes which properties are currently supported coming from the devcontainer.json and which from the feature metadata, this will change over time as we add more properties.
 
@@ -114,7 +114,7 @@ To apply the metadata together with a user's devcontainer.json at runtime the fo
 
 Variables in string values will be substituted at the time the value is applied. When the order matters, the devcontainer.json is considered last.
 
-### Notes ### {#Notes}
+### Notes ### {#notes}
 
 - Passing the label as a `LABEL` instruction in the Dockerfile:
 	- The size limit on Dockerfiles is around 1.3MB. The line length is limited to 65k characters.
@@ -124,17 +124,17 @@ Variables in string values will be substituted at the time the value is applied.
 	- The 500kb limit is shared, so we cannot use a second label in the same build to avoid it.
 	- If/when this becomes an issue we could embed the metadata as a file in the image (e.g., with a label indicating it).
 
-# Orchestration options # {#Orchestration-options}
+# Orchestration options # {#orchestration-options}
 
 A core principle of this specification is to seek to enrich existing container orchestrator formats with development container metadata where appropriate rather than replacing them. As a result, the metadata schema includes a set of optional properties for interoperating with different orchestrators. Today, the specification includes scenario-specific properties for working without a container orchestrator (by directly referencing an image or Dockerfile) and for using Docker Compose as a simple multi-container orchestrator. At the same time, this specification leaves space for further development and implementation of other orchestrator mechanisms and file formats.
 
 The following section describes the differences between those that are supported now.
 
-## Image based ## {#Image-based}
+## Image based ## {#image-based}
 
 Image based configurations only reference an image that should be reachable and downloadable through `docker pull` commands. Logins and tokens required for these operations are execution environment specific. The only required parameter is `image`. The details are [here](devcontainerjson-reference.md#image-or-dockerfile-specific-properties).
 
-## Dockerfile based ## {#Dockerfile-based}
+## Dockerfile based ## {#dockerfile-based}
 
 These configurations are defined as using a `Dockerfile` to define the starting point of the **development containers**. As with image based configurations, it is assumed that any base images are already reachable by **Docker** when performing a `docker build` command. The only required parameter in this case is the relative reference to the `Dockerfile` in `build.dockerfile`. The details are [here](devcontainerjson-reference.md#image-or-dockerfile-specific-properties).
 
@@ -145,7 +145,7 @@ There are multiple properties that allow users to control how `docker build` wor
 - `build.target`
 - `build.cacheFrom`
 
-## Docker Compose based ## {#Docker-Compose-based}
+## Docker Compose based ## {#docker-compose-based}
 
 Docker Compose configurations use `docker-compose` (which may be Docker Compose V1 or aliased Docker Compose V2) to create and manage a set of containers required for an application. As with the other configurations, any images required for this operation are assumed to be reachable. The required parameters are:
 
@@ -155,13 +155,13 @@ Docker Compose configurations use `docker-compose` (which may be Docker Compose 
 
 It is important to note that **image** and **dockerfile** properties are not needed since Docker Compose supports them natively in the format.
 
-# Other options # {#Other-options}
+# Other options # {#other-options}
 
 In addition to the configuration options explained above, there are other settings that apply when creating **development containers** to facilitate their use by developers.
 
 A complete list of available metadata properties and their purposes can be found in the [`devcontainer.json` reference](devcontainerjson-reference.md). However, we will describe the critical ones below in more detail.
 
-## Environment Variables ## {#Environment-Variables}
+## Environment Variables ## {#environment-variables}
 
 Environment variables can be set at different points in the dev container lifecycle. With this in mind, **development containers** support two classes of environment variables:
 
@@ -173,7 +173,7 @@ The reason for this separation is it allows for the use of information not avail
 
 Another notable and important environment variable related property is **`userEnvProbe`**. Implementing tools should use this property to "probe" for expected environment variables using the specified type of shell. However, it does not specify that this type of shell needs to be used for all sub-processes (given the performance impact). Instead, "probed" environment variables should be merged with Remote environment variables for any processes the implementer injects after the container is created.  This allows implementors to emulate developer expected behaviors around values added to their profile and rc files.
 
-## Mounts ## {#Mounts}
+## Mounts ## {#mounts}
 
 Mounts allow containers to have access to the underlying machine, share data between containers and to persist information between **development containers**.
 
@@ -183,7 +183,7 @@ While this "workspace mount" is often a "bind" mount, this is not a requirement 
 
 Inside the container this mount defaults to `/workspace`.
 
-## workspaceFolder and workspaceMount ## {#workspaceFolder-and-workspaceMount}
+## workspaceFolder and workspaceMount ## {#workspacefolder-and-workspacemount}
 
 The default mount point for the source code can be set with the `workspaceMount` property for **image** and **dockerfile** scenarios or using the built in `mounts` property in **Docker Compose** files. This folder should point to the root of a repository (where the `.git` folder is found) so that source control operations work correctly inside the container.
 
@@ -191,7 +191,7 @@ The `workspaceFolder` can then be set to the default folder inside the container
 
 See [`workspaceMount` and `workspaceFolder`](devcontainerjson-reference.md#image-or-dockerfile-specific-properties) for reference.
 
-## Users ## {#Users}
+## Users ## {#users}
 
 Users control the permissions of applications executed in the containers, allowing the developer to control them. The specification takes into account two types of user definitions:
 
@@ -210,7 +210,7 @@ A development environment goes through different lifecycle events during its use
 - Environment Stop
 - Environment Resume
 
-## Configuration Validation ## {#Configuration-Validation}
+## Configuration Validation ## {#configuration-validation}
 
 The exact steps required to validate configuration can vary based on exactly where the **development container** metadata is persisted. However, when considering a `devcontainer.json` file, the following validation should occur:
 
@@ -219,17 +219,17 @@ The exact steps required to validate configuration can vary based on exactly whe
 3. If no `devcontainer.json` is found, it is up to the implementing tool or service to determine what to do. This specification does not dictate this behavior.
 4. Validate that the metadata (for example `devcontainer.json`) contains all parameters required for the selected configuration type.
 
-## Environment Creation ## {#Environment-Creation}
+## Environment Creation ## {#environment-creation}
 
 The creation process goes through the steps necesarry to go from the user configuration to a working **environment** that is ready to be used.
 
-### Initialization ### {#Initialization}
+### Initialization ### {#initialization}
 
 During this step, the following is executed:
 - Validate access to the container orchestrator specified by the configuration.
 - Execution of `initializeCommand`.
 
-### Image creation ### {#Image-creation}
+### Image creation ### {#image-creation}
 
 The first part of environment creation is generating the final image(s) that the **development containers** are going to use. This step is orchestrator dependent and can consist of just pulling a Docker image, running Docker build, or docker-compose build. Additionally, this step is useful on its own since it permits the creation of intermediate images that can be uploaded and used by other users, thus cutting down on creation time. It is encouraged that tools implementing this specification give access to a command that just executes this step.
 
@@ -239,7 +239,7 @@ This step executes the following tasks:
 2. Pull/build/execute of the defined container orchestration format to create images.
 3. Validate the result of these operations.
 
-### Container Creation ### {#Container-Creation}
+### Container Creation ### {#container-creation}
 
 After image creation, containers are created based on that image and setup.
 
@@ -253,7 +253,7 @@ Note that container [mounts](#mounts), [environment variables](#environment-vari
 
 UID/GID sync'ing is an optional task for Linux (only) and that executes if the `updateRemoteUserUID` property is set to true and a `containerUser` or `remoteUser` is specified. In this case, an image update should be made prior to creating the container to set the specified user's UID and GID to match the current local user’s UID/GID to avoid permission problems with bind mounts. Implementations **may** skip this task if they do not use bind mounts on Linux, or use a container engine that does this translation automatically.
 
-### Post Container Creation ### {#Post-Container-Creation}
+### Post Container Creation ### {#post-container-creation}
 
 At the end of the container creation step, a set of commands are executed inside the **main** container:
 - `onCreateCommand`, `updateContentCommand` and `postCreateCommand`. This set of commands is executed in sequence on a container the first time it's created and depending on the creation parameters received. You can learn more in the [documentation on lifecycle scripts](devcontainerjson-reference.md#lifecycle-scripts). By default, `postCreateCommand` is executed in the background after reporting the successful creation of the development environment.
@@ -261,7 +261,7 @@ At the end of the container creation step, a set of commands are executed inside
 
 Remote [environment variables](#environment-variables) and [user](#users) configuration should be applied to all created processes in the container (inclusive of `userEnvProbe`).
 
-### Implementation specific steps ### {#Implementation-specific-steps}
+### Implementation specific steps ### {#implementation-specific-steps}
 
 After these steps have been executed, any implementation specific commands can safely execute. Specifically, any processes required by the implementation to support other properties in this specification should be started at this point. These may occur in parallel to any non-blocking, background post-container creation commands (as dictated by the `waitFor` property).
 
@@ -273,11 +273,11 @@ Typically, this is also the step where implementors would apply config or settin
 
 Once these final steps have occurred, implementing tools or services may connect to the environment as they see fit.
 
-## Environment Stop ## {#Environment-Stop}
+## Environment Stop ## {#environment-stop}
 
 The intention of this step is to ensure all containers are stopped correctly based on the appropriate orchestrator specific steps to ensure no data is lost. It is up to the implementing tool or service to determine when this event should happen.
 
-## Environment Resume ## {#Environment-Resume}
+## Environment Resume ## {#environment-resume}
 
 While it is not a strict requirement to keep a **development container** after it has been stopped, this is the most common scenario.
 
@@ -289,7 +289,7 @@ To resume the environment from a stopped state:
 
 Like during the create process, remote [environment variables](#environment-variables) and [user](#users) configuration should be applied to all created processes in the container (inclusive of `userEnvProbe`).
 
-## Parallel lifecycle script execution </a> ## {#Parallel-lifecycle-script-execution-</a>}
+## Parallel lifecycle script execution </a> ## {#parallel-lifecycle-script-execution-</a>}
 
 Dev containers support a single command for each of its lifecycle scripts. While serial execution of multiple commands can be achieved with `;`, `&&`, etc., parallel execution deserves first-class support.
 
@@ -297,7 +297,7 @@ All lifecycle scripts have been extended to support `object` types. The key of t
 
 Each entry in the `object` will be run in parallel during that lifecycle step.
 
-### Example ### {#Example}
+### Example ### {#example}
 
 ```json
 {
@@ -308,21 +308,21 @@ Each entry in the `object` will be run in parallel during that lifecycle step.
 }
 ```
 
-# Definitions # {#Definitions}
+# Definitions # {#definitions}
 
-## **Project Workspace Folder** ## {#**Project-Workspace-Folder**}
+## **Project Workspace Folder** ## {#**project-workspace-folder**}
 
 The **project workspace folder** is where an implementing tool should begin to search for `devcontainer.json` files. If the target project on disk is using git, the **project workspace folder** is typically the root of the git repository.
 
 
 
-# Dev Container metadata reference # {#Dev-Container-metadata-reference}
+# Dev Container metadata reference # {#dev-container-metadata-reference}
 
 The `devcontainer.json` file contains any needed metadata and settings required to configurate a **development container** for a given well-defined tool and runtime stack. It can be used by [tools and services that support the dev container spec](supporting-tools.md) to create a **development environment** that contains one or more **development containers**.
 
 Metadata properties marked with a 🏷️ can be stored in the `devcontainer.metadata` **container image label** in addition to `devcontainer.json`. This label can contain an array of json snippets that will be automatically merged with `devcontainer.json` contents (if any) when a container is created.
 
-## General devcontainer.json properties ## {#General-devcontainer.json-properties}
+## General devcontainer.json properties ## {#general-devcontainer.json-properties}
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -347,11 +347,11 @@ Metadata properties marked with a 🏷️ can be stored in the `devcontainer.met
 | `overrideFeatureInstallOrder` | array | By default, Features will attempt to automatically set the order they are installed based on a `installsAfter` property within each of them. This property allows you to override the Feature install order when needed. For example: <br />`"overrideFeatureInstallorder": [ "ghcr.io/devcontainers/features/common-utils", "ghcr.io/devcontainers/features/github-cli" ]` |
 | `customizations` 🏷️| object | Product specific properties, defined in [supporting tools](supporting-tools.md) |
 
-## Scenario specific properties ## {#Scenario-specific-properties}
+## Scenario specific properties ## {#scenario-specific-properties}
 
 The focus of `devcontainer.json` is to describe how to enrich a container for the purposes of development rather than acting as a multi-container orchestrator format. Instead, container orchestrator formats can be referenced when needed to manage multiple containers and their lifecycles. Today, `devcontainer.json` includes scenario specific properties for working without a container orchestrator (by directly referencing an image or Dockerfile) and for using Docker Compose as a simple multi-container orchestrator.
 
-### Image or Dockerfile specific properties ### {#Image-or-Dockerfile-specific-properties}
+### Image or Dockerfile specific properties ### {#image-or-dockerfile-specific-properties}
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -366,7 +366,7 @@ The focus of `devcontainer.json` is to describe how to enrich a container for th
 | `workspaceFolder` | string | Requires `workspaceMount` be set. Sets the default path that `devcontainer.json` supporting services / tools should open when connecting to the container. Defaults to the automatic source code mount location. |
 | `runArgs` | array | An array of [Docker CLI arguments](https://docs.docker.com/engine/reference/commandline/run/) that should be used when running the container. Defaults to `[]`. For example, this allows ptrace based debuggers like C++ to work in the container:<br /> `"runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ]` . |
 
-### Docker Compose specific properties ### {#Docker-Compose-specific-properties}
+### Docker Compose specific properties ### {#docker-compose-specific-properties}
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -375,11 +375,11 @@ The focus of `devcontainer.json` is to describe how to enrich a container for th
 | `runServices` | array | An array of services in your Docker Compose configuration that should be started by `devcontainer.json` supporting services / tools. These will also be stopped when you disconnect unless `"shutdownAction"` is `"none"`. Defaults to all services. |
 | `workspaceFolder` | string | Sets the default path that `devcontainer.json` supporting services / tools should open when connecting to the container (which is often the path to a volume mount where the source code can be found in the container). Defaults to `"/"`. |
 
-## Tool-specific properties ## {#Tool-specific-properties}
+## Tool-specific properties ## {#tool-specific-properties}
 
 While most properties apply to any `devcontainer.json` supporting tool or service, a few are specific to certain tools. You may explore this in the [supporting tools and services document](supporting-tools.md).
 
-## Lifecycle scripts ## {#Lifecycle-scripts}
+## Lifecycle scripts ## {#lifecycle-scripts}
 
 When creating or working with a dev container, you may need different commands to be run at different points in the container's lifecycle. The table below lists a set of command properties you can use to update what the container's contents in the order in which they are run (for example, `onCreateCommand` will run after `initializeCommand`). Each command property is an string or list of command arguments that should execute from the `workspaceFolder`.
 
@@ -397,7 +397,7 @@ For each command property, if the value is a single string, it will be run in `/
 
 If one of the lifecycle scripts fails, any subsequent scripts will not be executed. For instance, if `postCreateCommand` fails, `postStartCommand` and any following scripts will be skipped.
 
-## Minimum host requirements ## {#Minimum-host-requirements}
+## Minimum host requirements ## {#minimum-host-requirements}
 
 While `devcontainer.json` does not focus on hardware or VM provisioning, it can be useful to know your container's minimum RAM, CPU, and storage requirements. This is what the `hostRequirements` properties allow you to do. Cloud services can use these properties to automatically default to the best compute option available, while in other cases, you will be presented with a warning if the requirements are not met.
 
@@ -407,7 +407,7 @@ While `devcontainer.json` does not focus on hardware or VM provisioning, it can 
 | `hostRequirements.memory` 🏷️ | string |  A string indicating minimum memory requirements with a `tb`, `gb`, `mb`, or `kb` suffix. For example, `"hostRequirements": {"memory": "4gb"}` |
 | `hostRequirements.storage` 🏷️ | string | A string indicating minimum storage requirements with a `tb`, `gb`, `mb`, or `kb` suffix. For example, `"hostRequirements": {"storage": "32gb"}` |
 
-## Port attributes ## {#Port-attributes}
+## Port attributes ## {#port-attributes}
 
 The `portsAttributes` and `otherPortsAttributes` properties allow you to map default port options for one or more manually or automatically forwarded ports. The following is a list of options that can be set in the configuration object assigned to the property.
 
@@ -419,7 +419,7 @@ The `portsAttributes` and `otherPortsAttributes` properties allow you to map def
 | `requireLocalPort` 🏷️ | boolean | Dictates when port forwarding is required to map the port in the container to the same port locally or not. If set to `false`, the `devcontainer.json` supporting services /  tools will attempt to use the specified port forward to `localhost`, and silently map to a different one if it is unavailable. If set to `true`, you will be notified if it is not possible to use the same port. Defaults to `false`. |
 | `elevateIfNeeded` 🏷️ | boolean | Forwarding low ports like 22, 80, or 443 to `localhost` on the same port from `devcontainer.json` supporting services / tools may require elevated permissions on certain operating systems. Setting this property to `true` will automatically try to elevate the `devcontainer.json` supporting tool's permissions in this situation. Defaults to `false`. |
 
-## Formatting string vs. array properties ## {#Formatting-string-vs.-array-properties}
+## Formatting string vs. array properties ## {#formatting-string-vs.-array-properties}
 
 The format of certain properties will vary depending on the involvement of a shell.
 
@@ -463,7 +463,7 @@ Finally, you may use an object format:
 }
 ```
 
-## Variables in devcontainer.json ## {#Variables-in-devcontainer.json}
+## Variables in devcontainer.json ## {#variables-in-devcontainer.json}
 
 Variables can be referenced in certain string values in `devcontainer.json` in the following format: **\${variableName}**. The following is a list of available variables you can use.
 
@@ -477,16 +477,16 @@ Variables can be referenced in certain string values in `devcontainer.json` in t
 | `\${containerWorkspaceFolderBasename}` | Any | Name of the folder where the workspace files can be found in the container. |
 | `\${devcontainerId}` | Any | Allow features to refer to an identifier that is unique to the dev container they are installed into and that is stable across rebuilds.<br> The properties supporting it in devcontainer.json are: `name`, `runArgs`, `initializeCommand`, `onCreateCommand`, `updateContentCommand`, `postCreateCommand`, `postStartCommand`, `postAttachCommand`, `workspaceFolder`, `workspaceMount`, `mounts`, `containerEnv`, `remoteEnv`, `containerUser`, `remoteUser`, and `customizations`. |
 
-## Schema ## {#Schema}
+## Schema ## {#schema}
 
 You can see the dev container schema [here](https://github.com/devcontainers/spec/blob/main/schemas/devContainer.base.schema.json).
 
 
-## Publishing vs forwarding ports ## {#Publishing-vs-forwarding-ports}
+## Publishing vs forwarding ports ## {#publishing-vs-forwarding-ports}
 
 Docker has the concept of "publishing" ports when the container is created. Published ports behave very much like ports you make available to your local network. If your application only accepts calls from `localhost`, it will reject connections from published ports just as your local machine would for network calls. Forwarded ports, on the other hand, actually look like `localhost` to the application.
 
-## remoteUser ## {#remoteUser}
+## remoteUser ## {#remoteuser}
 
 
 A dev container configuration will inherit the `remoteUser` property from the base image it uses.
@@ -495,7 +495,7 @@ Using the [images](https://github.com/devcontainers/images) and [Templates](http
 
 
 
-# Dev Container Features reference # {#Dev-Container-Features-reference}
+# Dev Container Features reference # {#dev-container-features-reference}
 
 Development container "Features" are self-contained, shareable units of installation code and development container configuration. The name comes from the idea that referencing one of them allows you to quickly and easily add more tooling, runtime, or library "Features" into your development container for you or your collaborators to use.
 
@@ -507,7 +507,7 @@ Feature metadata is captured by a `devcontainer-feature.json` file in the root f
 
 > **Tip:** This section covers details on the Features specification. If you are looking for summarized information on creating your own Features, see the [template](https://github.com/devcontainers/feature-template) and [core Features](https://github.com/devcontainers/features) repositories.
 
-## Folder structure ## {#Folder-structure}
+## Folder structure ## {#folder-structure}
 
 A Feature is a self contained entity in a folder with at least a `devcontainer-feature.json` and `install.sh` entrypoint script.  Additional files are permitted and are packaged along side the required files.
 
@@ -547,7 +547,7 @@ All properties are optional **except for `id`, `version`, and `name`**.
 | `mounts` | object | Defaults to unset. Cross-orchestrator way to add additional mounts to a container. Each value is an object that accepts the same values as the [Docker CLI `--mount` flag](https://docs.docker.com/engine/reference/commandline/run/#mount). The Pre-defined [devcontainerId](./devcontainerjson-reference.md/#variables-in-devcontainerjson) variable may be referenced in the value. For example:<br />`"mounts": [{ "source": "dind-var-lib-docker", "target": "/var/lib/docker", "type": "volume" }]` |
 
 
-### Lifecycle Hooks ### {#Lifecycle-Hooks}
+### Lifecycle Hooks ### {#lifecycle-hooks}
 
 The following lifecycle hooks may be declared as properties of `devcontainer-feature.json`.
 
@@ -559,7 +559,7 @@ The following lifecycle hooks may be declared as properties of `devcontainer-fea
 | `postStartCommand` | [string, array, object](/docs/specs/devcontainerjson-reference.md#formatting-string-vs-array-properties) |
 | `postAttachCommand` | [string, array, object](/docs/specs/devcontainerjson-reference.md#formatting-string-vs-array-properties) |
 
-#### Behavior #### {#Behavior}
+#### Behavior #### {#behavior}
 
 Each property mirrors the behavior of the matching property in [`devcontainer.json`](/docs/specs/devcontainerjson-reference.md#Lifecycle-scripts), including the behavior that commands are executed from the context of the [project workspace folder](https://containers.dev/implementors/spec/#project-workspace-folder).
 
@@ -569,7 +569,7 @@ If a Feature provides a given command with the [object syntax](/docs/specs/devco
 
 > NOTE: These properties are stored within [image metadata](https://github.com/devcontainers/spec/blob/joshspicer/lifecycle_hook_feature_spec/docs/specs/devcontainer-reference.md#merge-logic).
 
-### The `options` property ### {#The-`options`-property}
+### The `options` property ### {#the-`options`-property}
 
 The options property is contains a map of option IDs and their related configuration settings. The ID becomes the name of the environment variable in all caps. See [option resolution](#option-resolution) for more details. For example:
 
@@ -595,7 +595,7 @@ The options property is contains a map of option IDs and their related configura
 | `optionId.default` | string or boolean | Default value for the option. |
 | `optionId.description` | string | Description for the option. |
 
-### User environment variables ### {#User-environment-variables}
+### User environment variables ### {#user-environment-variables}
 
 Feature scripts run as the `root` user and sometimes need to know which user account the dev container will be used with.
 
@@ -605,13 +605,13 @@ Additionally, the home folders of the two users are passed to the Feature script
 
 The container user can be set with `containerUser` in the devcontainer.json and image metadata, `user` in the docker-compose.yml, `USER` in the Dockerfile, and can be passed down from the base image.
 
-### Dev Container ID ### {#Dev-Container-ID}
+### Dev Container ID ### {#dev-container-id}
 
 An identifier will be referred to as `\${devcontainerId}` in the devcontainer.json and the Feature metadata and that will be replaced with the dev container's id. It should only be used in parts of the configuration and metadata that is not used for building the image because that would otherwise prevent pre-building the image at a time when the dev container's id is not known yet. Excluding boolean, numbers and enum properties the properties supporting `\${devcontainerId}` in the Feature metadata are: `entrypoint`, `mounts`, `customizations`.
 
 Implementations can choose how to compute this identifier. They must ensure that it is unique among other dev containers on the same Docker host and that it is stable across rebuilds of dev containers. The identifier must only contain alphanumeric characters. We describe a way to do this below.
 
-#### Label-based Implementation #### {#Label-based-Implementation}
+#### Label-based Implementation #### {#label-based-implementation}
 
 The following assumes that a dev container can be identified among other dev containers on the same Docker host by a set of labels on the container. Implementations may choose to follow this approach.
 
@@ -634,7 +634,7 @@ E.g., the [`ghcr.io/devcontainers/features/docker-in-docker` Feature](https://gi
 }
 ```
 
-#### Label-based Computation #### {#Label-based-Computation}
+#### Label-based Computation #### {#label-based-computation}
 
 - Input the labels as a JSON object with the object's keys being the label names and the object's values being the labels' values.
 	- To ensure implementations get to the same result, the object keys must be sorted and any optional whitespace outside of the keys and values must be removed.
@@ -705,7 +705,7 @@ As a shorthand, the value of a `feature` can be provided as a single string. Thi
 }
 ```
 
-### Referencing a feature ### {#Referencing-a-feature}
+### Referencing a feature ### {#referencing-a-feature}
 
 The `id` format specified dictates how a supporting tool will locate and download a given Feature. `id` is one of the following:
 
@@ -721,13 +721,13 @@ Feature identifiers should be assumed to be case-insensitive and should be norma
 
 (**) The provided path is always relative to the folder containing the `devcontainer.json`.  Further requirements are outlined in the [Locally Referenced Addendum](./devcontainer-features-distribution.md#locally-referenced-features)
 
-## Versioning ## {#Versioning}
+## Versioning ## {#versioning}
 
 Each Feature is individually [versioned according to the semver specification](https://semver.org/).  The `version` property in the respective `devcontainer-feature.json` file is updated to increment the Feature's version.
 
 Tooling that handles releasing Features will not republish Features if that exact version has already been published; however, tooling must republish major and minor versions in accordance with the semver specification.
 
-## Authoring ## {#Authoring}
+## Authoring ## {#authoring}
 
 Features can be authored in a number of languages, the most straightforward being bash scripts. If a Feature is authored in a different language information about it should be included in the metadata so that users can make an informed choice about it.
 
@@ -737,13 +737,13 @@ Applications should default to `/bin/sh` for Features that do not include this i
 
 If the Feature is included in a folder as part of the repository that contains `devcontainer.json`, no other steps are necessary.
 
-## Release ## {#Release}
+## Release ## {#release}
 
 _For information on distributing Features, see [devcontainer-features-distribution.md](./devcontainer-features-distribution.md)._
 
-## Execution ## {#Execution}
+## Execution ## {#execution}
 
-### Invoking `install.sh` ### {#Invoking-`install.sh`}
+### Invoking `install.sh` ### {#invoking-`install.sh`}
 
 The `install.sh` script for each Feature should be executed as `root` during a container image build. This allows the script to add needed OS dependencies or settings that could not otherwise be modified. This also allows the script to switch into another user's context using the `su` command (e.g., `su \${USERNAME} -c "command-goes-here"`). In combination, this allows both root and non-root image modifications to occur even if `sudo` is not present in the base image for security reasons.
 
@@ -753,7 +753,7 @@ To ensure that the appropriate shell is used, the execute bit should be set on `
 >
 > The `install.sh` file can similarly be used to bootstrap something written in a compiled language like Go. Given the increasing likelihood that a Feature needs to work on both x86_64 and arm64-based devices (e.g., Apple Silicon Macs), `install.sh` can detect the current architecture (e.g., using something like `uname -m` or `dpkg --print-architecture`), and then invoke the right executable for that architecture.
 
-### Installation order ### {#Installation-order}
+### Installation order ### {#installation-order}
 
 By default, Features are installed on top of a base image in an order determined as optimal by the implementing tool.
 
@@ -762,7 +762,7 @@ If any of the following properties are provided in the Feature's `devcontainer-f
 1. The `overrideFeatureInstallOrder` property in user's `devcontainer.json`. Allows users to control the order of execution of their Features.
 2. The `installsAfter` property defined as part of a Feature's `devcontainer-feature.json`.
 
-#### (1) The `overrideFeatureInstallOrder` property #### {#(1)-The-`overrideFeatureInstallOrder`-property}
+#### (1) The `overrideFeatureInstallOrder` property #### {#(1)-the-`overridefeatureinstallorder`-property}
 
 This property is declared by the user in their `devcontainer.json` file.
 
@@ -785,7 +785,7 @@ Example:
 | :--- | :--- | :--- |
 | `overrideFeatureInstallOrder` | array | Array consisting of the Feature `id` (without the semantic version) of Features in the order the user wants them to be installed. |
 
-#### (2) The `installsAfter` Feature property #### {#(2)-The-`installsAfter`-Feature-property}
+#### (2) The `installsAfter` Feature property #### {#(2)-the-`installsafter`-feature-property}
 
 This property is defined in an individual feature's `devcontainer-feature.json` file by the feature author.  `installsAfter` allows an author to provide the tooling hints on loose dependencies between Features.
 
@@ -797,7 +797,7 @@ After `overrideFeatureInstallOrder` is resolved, any remaining Features that dec
 | :--- | :--- | :--- |
 | `installsAfter` | array | Array consisting of the Feature `id` (omitting a version tag) that should be installed before the given Feature |
 
-### Option Resolution ### {#Option-Resolution}
+### Option Resolution ### {#option-resolution}
 
 A Feature's 'options' - specified as the value of a single Feature key/value pair in the user's `devcontainer.json` - are passed to the Feature as environment variables.
 
@@ -816,7 +816,7 @@ This file is sourced at build-time for the Feature `install.sh` entrypoint scrip
 
 Any options defined by a Feature's `devcontainer-feature.json` that are omitted in the user's `devcontainer.json` will be implicitly exported as its default value.
 
-### Option resolution example ### {#Option-resolution-example}
+### Option resolution example ### {#option-resolution-example}
 
 Suppose a `python` Feature has the following `options` parameters declared in the `devcontainer-feature.json` file:
 
@@ -879,14 +879,14 @@ Pip? false
 Optimize? true
 ```
 
-### Steps to rename a Feature ### {#Steps-to-rename-a-Feature}
+### Steps to rename a Feature ### {#steps-to-rename-a-feature}
 
 1. Update the Feature [source code](./devcontainer-features-distribution.md#source-code) folder and the `id` property in the [devcontainer-feature.json properties](#devcontainer-featurejson-properties) to reflect the new `id`. Other properties (`name`, `documentationUrl`, etc.) can optionally be updated during this step.
 2. Add or update the `legacyIds` property to the Feature, including the previously used `id`.
 3. Bump the semantic version of the Feature.
 4. Rerun the `devcontainer features publish` command, or equivalent tool that implements the [Features distribution specification](./features-distribution/#distribution).
 
-#### Example: Renaming a Feature #### {#Example:-Renaming-a-Feature}
+#### Example: Renaming a Feature #### {#example:-renaming-a-feature}
 
 Let's say we currently have a `docker-from-docker` Feature 👇
 
@@ -919,7 +919,7 @@ We'd want to rename this Feature to `docker-outside-of-docker`. The source code 
 
 **Note** - The semantic version of the Feature defined by the `version` property should be **continued** and should not be restarted at `1.0.0`.
 
-### Implementation notes ### {#Implementation-notes}
+### Implementation notes ### {#implementation-notes}
 
 There are several things to keep in mind for an application that implements Features:
 
@@ -933,7 +933,7 @@ There are several things to keep in mind for an application that implements Feat
 
 
 
-# Distribution and Discovery of Dev Container Features # {#Distribution-and-Discovery-of-Dev-Container-Features}
+# Distribution and Discovery of Dev Container Features # {#distribution-and-discovery-of-dev-container-features}
 
 **TL;DR Check out the [quick start repository](https://github.com/devcontainers/feature-template) to get started on distributing your own Dev Container Features.**
 
@@ -948,7 +948,7 @@ Goals include:
 
 > **Tip:** This section covers details on the Features specification. If you are looking for summarized information on creating your own Features, see the [template](https://github.com/devcontainers/feature-template) and [core Features](https://github.com/devcontainers/features) repositories.
 
-## Source code ## {#Source-code}
+## Source code ## {#source-code}
 
 Features source code is stored in a git repository.
 
@@ -988,13 +988,13 @@ Each sub-directory should be named such that it matches the `id` field of the `d
 
 Optionally, a mirrored `test` directory can be included with an accompanying `test.sh` script.  Implementing tools may use this to run tests against the given feature.
 
-## Versioning ## {#Versioning}
+## Versioning ## {#versioning}
 
 Each feature is individually [versioned according to the semver specification](https://semver.org/).  The `version` property in the respective `devcontainer-feature.json` file is parsed to determine if the feature should be republished.
 
 Tooling that handles publishing features will not republish features if that exact version has already been published; however, tooling must republish major and minor versions in accordance with the semver specification.
 
-## Packaging ## {#Packaging}
+## Packaging ## {#packaging}
 
 Features are distributed as tarballs.  The tarball contains the entire contents of the feature sub-directory, including the `devcontainer-feature.json`, `install.sh`, and any other files in the directory.
 
@@ -1014,7 +1014,7 @@ The `devcontainer-collection.json` is an auto-generated metadata file.
 
 Each features's `devcontainer-feature.json` metadata file is appended into the `features` top-level array.
 
-## Distribution ## {#Distribution}
+## Distribution ## {#distribution}
 
 There are several supported ways to distribute Features. Distribution is handled by the implementing packaging tool such as the [Dev Container CLI](https://github.com/devcontainers/cli) or [Dev Container Publish GitHub Action](https://github.com/marketplace/actions/dev-container-publish). See the [quick start repository](https://github.com/devcontainers/feature-template) for a full working example.
 
@@ -1022,7 +1022,7 @@ There are several supported ways to distribute Features. Distribution is handled
 
 A user references a distributed feature in a `devcontainer.json` as defined in ['referencing a feature'](./devcontainer-features.md#Referencing-a-feature).
 
-### OCI Registry ### {#OCI-Registry}
+### OCI Registry ### {#oci-registry}
 
 An OCI registry that implements the [OCI Artifact Distribution Specification](https://github.com/opencontainers/distribution-spec) serves as the primary distribution mechanism for features.
 
@@ -1067,13 +1067,13 @@ oras push \${REGISTRY}/\${NAMESPACE}:latest \
                             ./devcontainer-collection.json:application/vnd.devcontainers.collection.layer.v1+json
 ```
 
-### Directly referencing a tarball ### {#Directly-referencing-a-tarball}
+### Directly referencing a tarball ### {#directly-referencing-a-tarball}
 
 A Feature can be referenced directly in a user's [`devcontainer.json`](/docs/specs/devcontainer-reference.md#devcontainerjson) file by HTTPS URI that points to the tarball from the [package step](#packaging).
 
 The `.tgz` archive file must be named `devcontainer-feature-<featureId>.tgz`.
 
-### Locally referenced Features ### {#Locally-referenced-Features}
+### Locally referenced Features ### {#locally-referenced-features}
 
 Instead of publishing a Feature to an OCI registry, a Feature's source code may be referenced from a local folder. Locally referencing a Feature may be useful when first authoring a Feature.
 
