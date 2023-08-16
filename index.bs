@@ -853,7 +853,7 @@ The user's `devcontainer.json` declared the python Feature like so
 ```
 The emitted environment variables will be:
 
-```env
+```sh
 VERSION="3.10"
 PIP="false"
 OPTIMIZE="true"
