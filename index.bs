@@ -36,7 +36,7 @@ An **environment** is defined as a logical instance of one or more **development
 
 Furthermore, working inside a development container can require additional **metadata** to drive tooling or service experiences than you would normally need with a production container. Providing a structured and consistent form for this metadata is a core part of this specification.
 
-## devcontainer.json ## {#devcontainer.json}
+## devcontainer.json ## {#devcontainerjson}
 
 While the structure of this metadata is critical, it is also important to call out how this data can be represented on disk where appropriate. While other representations may be added over time, metadata can be stored in a JSON with Comments file called `devcontainer.json` today. Products using it should expect to find a devcontainer.json file in one or more of the following locations (in order of precedence):
 
@@ -1110,7 +1110,7 @@ An example project is illustrated below:
 │   ├── devcontainer.json
 ```
 
-#### devcontainer.json #### {#devcontainer.json}
+#### devcontainer.json #### {#devcontainerjson}
 ```json
 {
         // ...
