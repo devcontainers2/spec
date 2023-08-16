@@ -463,7 +463,7 @@ Finally, you may use an object format:
 }
 ```
 
-## Variables in devcontainer.json ## {#variables-in-devcontainer.json}
+## Variables in devcontainer.json ## {#variables-in-devcontainerjson}
 
 Variables can be referenced in certain string values in `devcontainer.json` in the following format: **\${variableName}**. The following is a list of available variables you can use.
 
