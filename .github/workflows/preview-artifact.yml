@@ -3,7 +3,7 @@ on:
   pull_request:
     paths:
       - index.bs
-      - .github/workflows/deploy-github-pages.yml
+      - .github/workflows/preview-artifact.yml
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
