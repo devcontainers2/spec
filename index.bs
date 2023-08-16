@@ -617,7 +617,7 @@ The identifier is derived from the set of container labels uniquely identifying 
 
 E.g., the [`ghcr.io/devcontainers/features/docker-in-docker` Feature](https://github.com/devcontainers/features/blob/main/src/docker-in-docker/devcontainer-feature.json) could use the dev container id with:
 
-```jsonc
+```json
 {
     "id": "docker-in-docker",
     "version": "1.0.4",
@@ -668,7 +668,7 @@ These options are sourced as environment variables at build-time, as specified i
 
 
 Below is a valid `features` object provided as an example.
-```jsonc
+```json
 "features": {
   "ghcr.io/user/repo/go": {},
   "ghcr.io/user/repo1/go:1": {},
@@ -690,12 +690,12 @@ An option's value can be provided as either a `string` or `boolean`, and should 
 
 As a shorthand, the value of a `feature` can be provided as a single string. This string is mapped to an option called `version`.  In the example below, both examples are equivalent.
 
-```jsonc
+```json
 "features": {
   "ghcr.io/owner/repo/go": "1.18"
 }
 ```
-```jsonc
+```json
 "features": {
   "ghcr.io/owner/repo/go": {
     "version": "1.18"
@@ -818,7 +818,7 @@ Any options defined by a Feature's `devcontainer-feature.json` that are omitted 
 
 Suppose a `python` Feature has the following `options` parameters declared in the `devcontainer-feature.json` file:
 
-```jsonc
+```json
 // ...
 "options": {
     "version": {
@@ -842,7 +842,7 @@ Suppose a `python` Feature has the following `options` parameters declared in th
 
 The user's `devcontainer.json` declared the python Feature like so
 
-```jsonc
+```json
 
 "features": {
     "python": {
@@ -890,7 +890,7 @@ Let's say we currently have a `docker-from-docker` Feature 👇
 
 Current `devcontainer-feature.json` :
 
-```jsonc
+```json
 {
     "id": "docker-from-docker",
     "version": "2.0.1",
@@ -902,7 +902,7 @@ Current `devcontainer-feature.json` :
 
 We'd want to rename this Feature to `docker-outside-of-docker`. The source code folder of the Feature will be updated to `docker-outside-of-docker` and the updated `devcontainer-feature.json` will look like 👇
 
-```jsonc
+```json
 {
     "id": "docker-outside-of-docker",
     "version": "2.0.2",
@@ -1109,7 +1109,7 @@ An example project is illustrated below:
 ```
 
 #### devcontainer.json
-```jsonc
+```json
 {
         // ...
         "features": {
