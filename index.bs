@@ -1108,7 +1108,7 @@ An example project is illustrated below:
 │   ├── devcontainer.json
 ```
 
-##### devcontainer.json
+#### devcontainer.json
 ```jsonc
 {
         // ...
