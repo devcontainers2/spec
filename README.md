@@ -82,22 +82,12 @@ https://creativecommons.org/licenses/by/4.0/legalcode
 ## Development
 
 To get started, make sure you have [Bikeshed] installed, then run these commands
-in your terminal to start the builtin Python HTTP server and `bikeshed watch` at
-the same time:
-
-💡 You can also do this in two separate terminals if you prefer. In VS Code you
-can click the <kbd>[|]</kbd> button in the terminal to split it into two.
+in **two separate terminals**:
 
 ```sh
-python -m http.server 8000 &
 bikeshed watch
+python -m http.server 8000
 ```
 
-To stop the Python HTTP server (which we sent to the background with `&`), bring
-it back to the foreground with `fg` and then press `Ctrl+C` like normal. You can
-see a list of all background jobs using `jobs`.
-
-```sh
-jobs
-fg
-```
+In VS Code you can click the <kbd>[|]</kbd> button in the terminal to split it
+into two.
