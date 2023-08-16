@@ -63,21 +63,10 @@ If you are interested in contributing, please check out the
 
 Please report issues in the following repositories:
 
-- Reference implementation Features and templates:
-  [devcontainers/features](https://github.com/devcontainers/features),
-  [devcontainers/templates](https://github.com/devcontainers/templates)
-- CLI reference implementation and non-spec related feature requests:
-  [devcontainers/cli](https://github.com/devcontainers/cli)
-- GitHub Action and Azure DevOps Task:
-  [devcontainers/ci](https://github.com/devcontainers/ci)
-
-# License
-
-License for this repository:
-
-Copyright © Microsoft Corporation All rights reserved.<br /> Creative Commons
-Attribution 4.0 License (International):
-https://creativecommons.org/licenses/by/4.0/legalcode
+<!-- prettier-ignore -->
+- Reference implementation Features and templates: [devcontainers/features](https://github.com/devcontainers/features), [devcontainers/templates](https://github.com/devcontainers/templates)
+- CLI reference implementation and non-spec related feature requests: [devcontainers/cli](https://github.com/devcontainers/cli)
+- GitHub Action and Azure DevOps Task: [devcontainers/ci](https://github.com/devcontainers/ci)
 
 ## Development
 
@@ -91,3 +80,11 @@ python -m http.server 8000
 
 In VS Code you can click the <kbd>[|]</kbd> button in the terminal to split it
 into two.
+
+ℹ Bikeshed supports all of CommonMark, but not GFM. For instance, [table must be
+HTML `<table>` elements] instead of `|`-delimited Markdown tables.
+
+<!-- prettier-ignore-start -->
+[Bikeshed]: https://speced.github.io/bikeshed/
+[table must be HTML `<table>` elements]: https://github.com/speced/bikeshed/issues/1128#issuecomment-388907059
+<!-- prettier-ignore-end -->
