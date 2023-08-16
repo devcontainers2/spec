@@ -82,7 +82,9 @@ In VS Code you can click the <kbd>[|]</kbd> button in the terminal to split it
 into two.
 
 ℹ Bikeshed supports all of CommonMark, but not GFM. For instance, [table must be
-HTML `<table>` elements] instead of `|`-delimited Markdown tables.
+HTML `<table>` elements] instead of `|`-delimited Markdown tables. But don't let
+that fool you! It's auto-linking features _vastly_ surpass plain Markdown. Make
+sure you use `[=hello=]` to autolink to `<dfn>hello</dfn>`!
 
 <!-- prettier-ignore-start -->
 [Bikeshed]: https://speced.github.io/bikeshed/
