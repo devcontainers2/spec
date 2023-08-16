@@ -34,10 +34,12 @@ jobs:
       - run: pipx install bikeshed && bikeshed update
       - id: configure-pages
         uses: actions/configure-pages@v3
-      - run: |
+      - shell: bash {0}
+        run: |
           bikeshed spec | tee $GIITHUB_STEP_SUMMARY
           sed -i '1s;^;```sh\n;' $GIITHUB_STEP_SUMMARY
           echo $'\n```' >> $GITHUB_STEP_SUMMARY
+          test -f index.html
         env:
           BASE_URL: ${{ steps.configure-pages.outputs.base_url }}/
       - uses: actions/upload-pages-artifact@v2
