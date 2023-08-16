@@ -2,12 +2,18 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: "main"
-    paths-ignore:
-      - README.md
-      - LICENSE
-      - .gitignore
-      - CONTRIBUTING.md
-      - LICENSE
+    # Right now EVERYTHING is published! You can access README.md via devcontainers.org/spec/README.md.
+    # That's why we re-run the GitHub Pages deployment on EVERY SINGLE CHANGE instead of ignoring the
+    # irrelevant bits.
+    # paths-ignore:
+    #   - README.md
+    #   - LICENSE
+    #   - .gitignore
+    #   - CONTRIBUTING.md
+    #   - LICENSE
+    #   - proposals/**
+    #   - .github/**
+    #   - "!.github/workflows/deploy-github-pages.yml"
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}
