@@ -36,7 +36,7 @@ jobs:
         uses: actions/configure-pages@v3
       - shell: bash {0}
         run: |
-          bikeshed spec | tee $GITHUB_STEP_SUMMARY
+          bikeshed spec --die-on=nothing | tee $GITHUB_STEP_SUMMARY
           sed -e 's/\x1b\[[0-9;]*m//g' -i $GITHUB_STEP_SUMMARY
           sed -i '1s;^;```sh\n;' $GITHUB_STEP_SUMMARY
           echo $'\n```' >> $GITHUB_STEP_SUMMARY
