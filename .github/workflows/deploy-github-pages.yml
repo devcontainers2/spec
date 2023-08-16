@@ -4,6 +4,7 @@ on:
     branches: "main"
     paths:
       - index.bs
+      - .github/workflows/deploy-github-pages.yml
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}
