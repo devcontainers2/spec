@@ -1,11 +1,9 @@
 name: Preview artifact
 on:
-  push:
-    branches: "main"
+  pull_request:
     paths:
       - index.bs
       - .github/workflows/deploy-github-pages.yml
-  workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
