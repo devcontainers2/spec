@@ -80,34 +80,37 @@ The metadata is added to the image as a `devcontainer.metadata` label with a JSO
 
 To apply the metadata together with a user's devcontainer.json at runtime the following merge logic by property is used. The table also notes which properties are currently supported coming from the devcontainer.json and which from the feature metadata, this will change over time as we add more properties.
 
-| Property | Type/Format | Merge Logic | devcontainer.json | devcontainer-feature.json |
-| -------- | ----------- | ----------- | :---------------: | :--------------: |
-| `id` | E.g., `ghcr.io/devcontainers/features/node:1` | Not merged. |   | x |
-| `init` | `boolean` | `true` if at least one is `true`, `false` otherwise. | x | x |
-| `privileged` | `boolean` | `true` if at least one is `true`, `false` otherwise. | x | x |
-| `capAdd` | `string[]` | Union of all `capAdd` arrays without duplicates. | x | x |
-| `securityOpt` | `string[]` | Union of all `securityOpt` arrays without duplicates. | x | x |
-| `entrypoint` | `string` | Collected list of all entrypoints. |   | x |
-| `mounts` | `(string \| { type, src, dst })[]` | Collected list of all mountpoints. Conflicts: Last source wins. | x | x |
-| `onCreateCommand` | `string \| string[] \| {[key: string]: string \| string[]}` | Collected list of all onCreateCommands. | x | x  |
-| `updateContentCommand` | `string \| string[] \| {[key: string]: string \| string[]}` | Collected list of all updateContentCommands. | x | x  |
-| `postCreateCommand` | `string \| string[] \| {[key: string]: string \| string[]}` | Collected list of all postCreateCommands. | x | x  |
-| `postStartCommand` | `string \| string[] \| {[key: string]: string \| string[]}` | Collected list of all postStartCommands. | x | x  |
-| `postAttachCommand` | `string \| string[] \| {[key: string]: string \| string[]}` | Collected list of all postAttachCommands. | x | x  |
-| `waitFor` | enum | Last value wins. | x |   |
-| `customizations` | Object of tool-specific customizations. | Merging is left to the tools. | x | x |
-| `containerUser` | `string` | Last value wins. | x |   |
-| `remoteUser` | `string` | Last value wins. | x |   |
-| `userEnvProbe` | `string` (enum) | Last value wins. | x |   |
-| `remoteEnv` | Object of strings. | Per variable, last value wins. | x |   |
-| `containerEnv` | Object of strings. | Per variable, last value wins. | x |   |
-| `overrideCommand` | `boolean` | Last value wins. | x |   |
-| `portsAttributes` | Map of ports to attributes. | Per port (not per port attribute), last value wins. | x |   |
-| `otherPortsAttributes` | Port attributes. | Last value wins (not per port attribute). | x |   |
-| `forwardPorts` | `(number \| string)[]` | Union of all ports without duplicates. Last one wins (when mapping changes). | x |   |
-| `shutdownAction` | `string` (enum) | Last value wins. | x |   |
-| `updateRemoteUserUID` | `boolean` | Last value wins. | x |   |
-| `hostRequirements` | `cpus`, `memory`, `storage` | Max value wins. | x |   |
+<table>
+<thead>
+<tr><th>Property <th>Type/Format <th>Merge Logic <th>devcontainer.json <th>devcontainer-feature.json
+<tbody>
+<tr><td>`id` <td>E.g., `ghcr.io/devcontainers/features/node:1` <td>Not merged. <td>  <td>x
+<tr><td>`init` <td>`boolean` <td>`true` if at least one is `true`, `false` otherwise. <td>x <td>x
+<tr><td>`privileged` <td>`boolean` <td>`true` if at least one is `true`, `false` otherwise. <td>x <td>x
+<tr><td>`capAdd` <td>`string[]` <td>Union of all `capAdd` arrays without duplicates. <td>x <td>x
+<tr><td>`securityOpt` <td>`string[]` <td>Union of all `securityOpt` arrays without duplicates. <td>x <td>x
+<tr><td>`entrypoint` <td>`string` <td>Collected list of all entrypoints. <td>  <td>x
+<tr><td>`mounts` <td>`(string | { type, src, dst })[]` <td>Collected list of all mountpoints. Conflicts: Last source wins. <td>x <td>x
+<tr><td>`onCreateCommand` <td>`string | string[] | {[key: string]: string | string[]}` <td>Collected list of all onCreateCommands. <td>x <td>x
+<tr><td>`updateContentCommand` <td>`string | string[] | {[key: string]: string | string[]}` <td>Collected list of all updateContentCommands. <td>x <td>x
+<tr><td>`postCreateCommand` <td>`string | string[] | {[key: string]: string | string[]}` <td>Collected list of all postCreateCommands. <td>x <td>x
+<tr><td>`postStartCommand` <td>`string | string[] | {[key: string]: string | string[]}` <td>Collected list of all postStartCommands. <td>x <td>x
+<tr><td>`postAttachCommand` <td>`string | string[] | {[key: string]: string | string[]}` <td>Collected list of all postAttachCommands. <td>x <td>x
+<tr><td>`waitFor` <td>enum <td>Last value wins. <td>x <td>
+<tr><td>`customizations` <td>Object of tool-specific customizations. <td>Merging is left to the tools. <td>x <td>x
+<tr><td>`containerUser` <td>`string` <td>Last value wins. <td>x <td>
+<tr><td>`remoteUser` <td>`string` <td>Last value wins. <td>x <td>
+<tr><td>`userEnvProbe` <td>`string` (enum) <td>Last value wins. <td>x <td>
+<tr><td>`remoteEnv` <td>Object of strings. <td>Per variable, last value wins. <td>x <td>
+<tr><td>`containerEnv` <td>Object of strings. <td>Per variable, last value wins. <td>x <td>
+<tr><td>`overrideCommand` <td>`boolean` <td>Last value wins. <td>x <td>
+<tr><td>`portsAttributes` <td>Map of ports to attributes. <td>Per port (not per port attribute), last value wins. <td>x <td>
+<tr><td>`otherPortsAttributes` <td>Port attributes. <td>Last value wins (not per port attribute). <td>x <td>
+<tr><td>`forwardPorts` <td>`(number | string)[]` <td>Union of all ports without duplicates. Last one wins (when mapping changes). <td>x <td>
+<tr><td>`shutdownAction` <td>`string` (enum) <td>Last value wins. <td>x <td>
+<tr><td>`updateRemoteUserUID` <td>`boolean` <td>Last value wins. <td>x <td>
+<tr><td>`hostRequirements` <td>`cpus`, `memory`, `storage` <td>Max value wins. <td>x <td>
+</table>
 
 Variables in string values will be substituted at the time the value is applied. When the order matters, the devcontainer.json is considered last.
 
