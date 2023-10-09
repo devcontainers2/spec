@@ -3,6 +3,7 @@ on:
   push:
     branches: "main"
     paths:
+      - "*.schema.json"
       - index.bs
       - .github/workflows/deploy-pages.yml
   workflow_dispatch:
@@ -12,7 +13,6 @@ concurrency:
 jobs:
   deploy-github-pages:
     permissions:
-      contents: read
       id-token: write
       pages: write
       deployments: write
@@ -22,19 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pipx install bikeshed && bikeshed update
+      - run: pip install bikeshed && bikeshed update
       - id: configure-pages
         uses: actions/configure-pages@v3
-      - shell: bash {0}
-        run: |
-          timeout 5 bikeshed watch 2>&1 | tee "$GITHUB_STEP_SUMMARY"
-          # ☝ This is a hack to override the fatal errors. Use 'bikeshed spec'.
-          sed -e 's/\x1b\[[0-9;]*m//g' -i "$GITHUB_STEP_SUMMARY"
-          sed '1s;^;```sh\n;' -i "$GITHUB_STEP_SUMMARY"
-          echo $'\n```' >> "$GITHUB_STEP_SUMMARY"
-          test -f index.html
-        env:
-          BASE_URL: ${{ steps.configure-pages.outputs.base_url }}/
+      - run: bikeshed
       - uses: actions/upload-pages-artifact@v2
         with:
           path: .
