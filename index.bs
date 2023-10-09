@@ -2,6 +2,7 @@
 Title: Development Containers
 Abstract: A Development Container (or Dev Container for short) allows you to use a container as a full-featured development environment. It can be used to run an application, to separate tools, libraries, or runtimes needed for working with a codebase, and to aid in continuous integration and testing. Dev containers can be run locally or remotely, in a private or public cloud, in a variety of supporting tools and editors.
 Status: LD
+Warning: Not Ready
 Shortname: devcontainers
 Repository: devcontainers-community/devcontainers.org
 Favicon: https://avatars.githubusercontent.com/u/102692984?s=200&v=4
@@ -10,7 +11,7 @@ Editor: Samruddhi Khandale, Microsoft, https://github.com/samruddhikhandale
 Editor: Brigit Murtaugh, Microsoft, https://github.com/bamurtaugh
 Editor: Josh Spicer, Microsoft, https://github.com/joshspicer
 Former Editor: Edmundo Gonzalez, Microsoft, https://github.com/edgonmsft
-!Participate: <a href="https://github.com/devcontainers/feature-starter">Create your own Dev Container Feature collection</a>
+!Participate: <a href="https://github.com/devcontainers/spec">Participate on GitHub!</a>
 Markup Shorthands: markdown yes
 Complain About: accidental-2119 no, missing-example-ids no
 Boilerplate: omit conformance
@@ -54,13 +55,13 @@ document.body.insertAdjacentHTML("afterbegin", `
 </script>
 
 <!--
-████ ██    ██ ████████ ████████   ███████ 
+████ ██    ██ ████████ ████████   ███████
  ██  ███   ██    ██    ██     ██ ██     ██
  ██  ████  ██    ██    ██     ██ ██     ██
  ██  ██ ██ ██    ██    ████████  ██     ██
  ██  ██  ████    ██    ██   ██   ██     ██
  ██  ██   ███    ██    ██    ██  ██     ██
-████ ██    ██    ██    ██     ██  ███████ 
+████ ██    ██    ██    ██     ██  ███████
 -->
 
 # Introduction # {#intro}
@@ -73,26 +74,34 @@ An <dfn export>environment</dfn> is defined as a logical instance of one or more
 
 [=Development containers=] allow one to define a repeatable development environment for a user or team of developers that includes the execution environment the application needs. A development container defines an environment in which you develop your application before you are ready to deploy. While deployment and development containers may resemble one another, you may not want to include tools in a deployment image that you use during development and you may need to use different secrets or other settings.
 
-Furthermore, working inside a development container can require additional [=metadata=] to drive tooling or service experiences than you would normally need with a production container. Providing a structured and consistent form for this metadata is a core part of this specification.
+Furthermore, working inside a development container can require additional metadata to drive tooling or service experiences than you would normally need with a production container. Providing a structured and consistent form for this metadata is a core part of this specification.
+
+## Lifecycle
+
+A development environment goes through different lifecycle events during its use in the outer and inner loop of development.
+
+1. Configuration Validation
+2. Environment Creation
+3. Environment Stop
+4. Environment Resume
+
+### Configuration validation
+
+The exact steps required to <dfn>validate a configuration</dfn> can vary based on exactly where the development container metadata is persisted. However, when considering a [=devcontainer.json=] file, the following validation should occur:
+
+1. Validate that a workspace source folder has been provided. It is up to the implementing tool to determine what to do if no source folder is provided.
+2. [=Search for a devcontainer.json=] in the workspace source folder.
+3. If no [=devcontainer.json=] is found, it is up to the implementing tool or service to determine what to do. This specification does not dictate this behavior.
+4. Validate that the metadata contains all parameters required for the selected configuration type.
 
 <!--
-██       ████ ████████ ████████  ██████  ██    ██  ██████  ██       ████████
-██        ██  ██       ██       ██    ██  ██  ██  ██    ██ ██       ██      
-██        ██  ██       ██       ██         ████   ██       ██       ██      
-██        ██  ██████   ██████   ██          ██    ██       ██       ██████  
-██        ██  ██       ██       ██          ██    ██       ██       ██      
-██        ██  ██       ██       ██    ██    ██    ██    ██ ██       ██      
-████████ ████ ██       ████████  ██████     ██     ██████  ████████ ████████
--->
-
-<!--
- ██████   ███████  ██    ██ ████████ ████  ██████  
-██    ██ ██     ██ ███   ██ ██        ██  ██    ██ 
-██       ██     ██ ████  ██ ██        ██  ██       
+ ██████   ███████  ██    ██ ████████ ████  ██████
+██    ██ ██     ██ ███   ██ ██        ██  ██    ██
+██       ██     ██ ████  ██ ██        ██  ██
 ██       ██     ██ ██ ██ ██ ██████    ██  ██   ████
-██       ██     ██ ██  ████ ██        ██  ██    ██ 
-██    ██ ██     ██ ██   ███ ██        ██  ██    ██ 
- ██████   ███████  ██    ██ ██       ████  ██████  
+██       ██     ██ ██  ████ ██        ██  ██    ██
+██    ██ ██     ██ ██   ███ ██        ██  ██    ██
+ ██████   ███████  ██    ██ ██       ████  ██████
 -->
 
 # Configuration # {#config}
@@ -105,47 +114,363 @@ There are three primary sources that dev container configuration can come from:
 
 ## devcontainer.json
 
-<code><dfn export>devcontainer.json</dfn></code> file is a JSON-with-comments file. Said file can be located at any of these locations:
+To <dfn>search for a devcontainer.json</dfn>, an agent should look in any of these locations to locate a [=devcontainer.json=]
 
-- <code>.devcontainer/devcontainer.json</code>
-- <code>.devcontainer.json</code>
-- <code>.devcontainer/<i>$folder</i>/devcontainer.json</code> (where <code><i>$folder</i></code> is a sub-folder, one level deep)
+- `.devcontainer/devcontainer.json`
+- `.devcontainer.json`
+- <code>.devcontainer/<i>$FOLDER</i>/devcontainer.json</code> (where `$FOLDER` is a sub-folder, one level deep)
 
 It is valid that these files may exist in more than one location, so consider providing a mechanism for users to select one when appropriate.
 
-The <code>[=devcontainer.json=]</code> file should conform to this type:
+The <dfn export>`devcontainer.json`</dfn> file is a [JSON-with-comments](https://github.com/microsoft/node-jsonc-parser) file that conforms to the {{DevcontainerJSON}} IDL definition below:
 
 <xmp class=idl>
-interface DevcontainerJSON {
-  attribute string name;
-  attribute sequence<string> forwardPorts;
-  attribute any portsAttributes;
-  attribute any otherPortsAttributes;
-  attribute any containerEnv;
-  attribute any remoteEnv;
-  attribute string remoteUser;
-  attribute string containerUser;
-  attribute boolean updateRemoteUserUID;
-  attribute any userEnvProbe;
+dictionary DevcontainerJSON {
+  DOMString name;
+  sequence<DOMString> forwardPorts;
+  any portsAttributes;
+  any otherPortsAttributes;
+  any containerEnv;
+  any remoteEnv;
+  DOMString remoteUser;
+  DOMString containerUser;
+  boolean updateRemoteUserUID;
+  any userEnvProbe;
+  DOMString workspaceFolder;
 };
 </xmp>
 
-<!--
-████████ ████████    ███    ████████ ██     ██ ████████  ████████          ██████   ███████  ██    ██ ████████ ████  ██████  
-██       ██         ██ ██      ██    ██     ██ ██     ██ ██               ██    ██ ██     ██ ███   ██ ██        ██  ██    ██ 
-██       ██        ██   ██     ██    ██     ██ ██     ██ ██               ██       ██     ██ ████  ██ ██        ██  ██       
-██████   ██████   ██     ██    ██    ██     ██ ████████  ██████   ███████ ██       ██     ██ ██ ██ ██ ██████    ██  ██   ████
-██       ██       █████████    ██    ██     ██ ██   ██   ██               ██       ██     ██ ██  ████ ██        ██  ██    ██ 
-██       ██       ██     ██    ██    ██     ██ ██    ██  ██               ██    ██ ██     ██ ██   ███ ██        ██  ██    ██ 
-██       ████████ ██     ██    ██     ███████  ██     ██ ████████          ██████   ███████  ██    ██ ██       ████  ██████  
--->
+- {{DevcontainerJSON/name}}: A name for the dev container displayed in the UI
+
+- {{forwardPorts}}: An array of port numbers or `"host:port"` values that should always be forwarded from inside the primary container to the local machine (including on the web). Defaults to `[]`.
+
+    <pre class=example highlight=json>
+    {
+      // The "db" hostname in docker-compose.yml
+      "forwardPorts": [3000, "db:8080"]
+    }
+    </pre>
+
+    <p class=note>This property is most useful for forwarding ports that cannot be auto-forwarded because the related process that starts before the [=devcontainer.json=] supporting service/tool connects or for forwarding a service not in the primary container in Docker Compose scenarios.</p>
+
+- {{portsAttributes}}: Object that maps a port number, <code>"host:port"</code> value, range, or regular expression to a set of default options. See port attributes for available options.
+
+    <pre class=example highlight=json>
+    {
+      "forwardPorts": [3000],
+      "portsAttributes": {
+        "3000": {
+          "label": "Application port"
+        }
+      }
+    }
+    </pre>
+
+- {{otherPortsAttributes}}: Default options for ports, port ranges, and hosts that aren't configured using portsAttributes. See port attributes for available options.
+
+    <pre class=example highlight=json>
+    {
+      "forwardPorts": [3000],
+      "otherPortsAttributes": {
+        "onAutoForward": "silent"
+      }
+    }
+    </pre>
+
+- {{containerEnv}}: A set of name-value pairs that sets or overrides environment variables for the container. Environment and pre-defined variables may be referenced in the values.
+
+    <pre class=example highlight=json>
+    {
+      "containerEnv": {
+        "MY_VARIABLE": "${localEnv:MY_VARIABLE}"
+      }
+    }
+    </pre>
+
+    <div class=note>
+    If you want to reference an existing container variable while setting this one (like updating the `PATH`), use {{remoteEnv}} instead. {{containerEnv}} will set the variable on the Docker container itself, so all processes spawned in the container will have access to it. But it will also be static for the life of the container - you must rebuild the container to update the value.
+
+    We recommend using containerEnv (over {{remoteEnv}}) as much as possible since it allows all processes to see the variable and isn't client-specific.
+    </div>
+
+- {{workspaceFolder}}: Sets the default path that devcontainer.json supporting services/tools should open when connecting to the container. Defaults to the automatic source code mount location.
+
+A core principle of this specification is to seek to enrich existing container orchestrator formats with development container metadata where appropriate rather than replacing them. As a result, the metadata schema includes a set of optional properties for interoperating with different orchestrators. Today, the specification includes scenario-specific properties for working without a container orchestrator (by directly referencing an image or Dockerfile) and for using Docker Compose as a simple multi-container orchestrator. At the same time, this specification leaves space for further development and implementation of other orchestrator mechanisms and file formats.
+
+### Image based
+
+Image based configurations only reference an image that should be reachable and downloadable through docker pull commands. Logins and tokens required for these operations are execution environment specific. The only required parameter is image.
+
+<xmp class=idl>
+partial dictionary DevcontainerJSON {
+  DOMString image;
+};
+</xmp>
+
+- {{image}}: The name of an image in a container registry (DockerHub, GitHub Container Registry, Azure Container Registry) that devcontainer.json supporting services/tools should use to create the dev container. Required when using an image.
+
+Both [[#image-based]] and [[#dockerfile-based]] configurations share these properties:
+
+<xmp class=idl>
+partial dictionary DevcontainerJSON {
+  // image;
+  // build;
+  (long or DOMString or sequence<(long or DOMString)>) appPort;
+  DevcontainerWorkspaceMount workspaceMount;
+  DevcontainerRunArgs runArgs;
+};
+</xmp>
+
+- {{image}}: The name of an image in a container registry (DockerHub, GitHub Container Registry, Azure Container Registry) that devcontainer.json supporting services/tools should use to create the dev container. Required when using an image.
+
+- {{build}}: Configuration for building a Dockerfile.
+
+    - {{dockerfile}}: The location of a Dockerfile that defines the contents of the container. Required when using a Dockerfile.
+
+    - {{context}}: Path that the Docker build should be run from relative to devcontainer.json. Defaults to ".".
+
+    - {{args}}: A set of name-value pairs containing Docker image build arguments that should be passed when building a Dockerfile. Defaults to not set.
+
+    - {{target}}: A string that specifies a Docker image build target that should be passed when building a Dockerfile. Defaults to not set.
+
+    - {{cacheFrom}}: A string or array of strings that specify one or more images to use as caches when building the image. Cached image identifiers are passed to the docker build command with --cache-from.
+
+- {{appPort}}: In most cases, we recommend using the new forwardPorts property. This property accepts a port or array of ports that should be published locally when the container is running. Defaults to [].
+
+- {{workspaceMount}}: Overrides the default local mount point for the workspace when the container is created. Supports the same values as the Docker CLI --mount flag.
+
+- {{runArgs}}: An array of Docker CLI arguments that should be used when running the container. Defaults to []. Allows customization for running the container.
+
+### Dockerfile based
+
+<xmp class=idl>
+partial dictionary DevcontainerJSON {
+  BuildOptions build;
+};
+</xmp>
+
+These configurations are defined as using a Dockerfile to define the starting point of the development containers. As with image based configurations, it is assumed that any base images are already reachable by Docker when performing a docker build command. The only required parameter in this case is the relative reference to the Dockerfile in build.dockerfile.
+
+There are multiple properties that allow users to control how docker build works:
+
+<xmp class=idl>
+dictionary BuildOptions {
+  required DOMString dockerfile;
+  DOMString context;
+  object args;
+  DOMString target;
+  (DOMString or sequence<DOMString>) cacheFrom;
+};
+</xmp>
+
+### Docker Compose based
+
+<xmp class=idl>
+partial dictionary DevcontainerJSON {
+  (DOMString or sequence<DOMString>) dockerComposeFile;
+  DOMString service;
+  sequence<DOMString> runServices;
+  // Also has workspaceFolder just like "image" and "dockerFile"
+  // DOMString workspaceFolder;
+};
+</xmp>
+
+Docker Compose configurations use docker-compose (which may be Docker Compose V1 or aliased Docker Compose V2) to create and manage a set of containers required for an application. As with the other configurations, any images required for this operation are assumed to be reachable. The required parameters are:
+
+- {{dockerComposeFile}}: the reference to the Docker Compose file(s) to be used.
+
+- {{service}}: declares the main container that will be used for all other operations. Tools are assumed to also use this parameter to connect to the development container, although they can provide facilities to connect to the other containers as required by the user.
+
+- {{runServices}}: an optional property that indicates the set of services in the docker-compose configuration that should be started or stopped with the environment.
+
+It is important to note that image and dockerfile properties are not needed since Docker Compose supports them natively in the format.
+
+## Docker image metadata
+
+A subset of dev container config options may be stored in the [=devcontainer.metadata=] label on the Docker image that is being used as the base image. The <dfn export>`devcontainer.metadata`</dfn> is a JSON-encoded string of the following subset of the properties configurable via [=devcontainer.json=].
+
+<xmp class=idl>
+typedef (
+  DevcontainerMetadataItem
+  or sequence<DevcontainerMetadataItem>
+) DevcontainerMetadata;
+
+dictionary DevcontainerMetadataItem {};
+</xmp>
+
+The merge logic to combine these properties with [=devcontainer-feature.json=] the
+[=devcontainer.json=] is described in [[#config-merge]].
+
+<pre class=example highlight=dockerfile>
+FROM ubuntu:latest
+LABEL "devcontainer.metadata"='[{ "customizations": { "vscode": { ... } } }]'
+</pre>
 
 <!--
-████████ ████████    ███    ████████ ██     ██ ████████  ████████         ████████  ████  ██████  ████████
-██       ██         ██ ██      ██    ██     ██ ██     ██ ██               ██     ██  ██  ██    ██    ██   
-██       ██        ██   ██     ██    ██     ██ ██     ██ ██               ██     ██  ██  ██          ██   
-██████   ██████   ██     ██    ██    ██     ██ ████████  ██████   ███████ ██     ██  ██   ██████     ██   
-██       ██       █████████    ██    ██     ██ ██   ██   ██               ██     ██  ██        ██    ██   
-██       ██       ██     ██    ██    ██     ██ ██    ██  ██               ██     ██  ██  ██    ██    ██   
-██       ████████ ██     ██    ██     ███████  ██     ██ ████████         ████████  ████  ██████     ██   
+- Passing the label as a `LABEL` instruction in the Dockerfile:
+    - The size limit on `Dockerfile` is around 1.3MB. The line length is limited to 65k characters.
+    - Using one line per feature should allow for making full use of these limits.
+
+- Passing the label as a command line argument:
+    - There is no size limit documented for labels, but the daemon returns an error when the request header is >500kb.
+    - The 500kb limit is shared, so we cannot use a second label in the same build to avoid it.
+    - If/when this becomes an issue we could embed the metadata as a file in the image (e.g., with a label indicating it).
 -->
+
+## Merge dev container configurations ## {#config-merge}
+
+To <dfn>merge dev container configurations</dfn>, perform the following described logic for each key to produce a single resulting object. Any properties not listed or excess properties from the source object should not be merged into the final configuration.
+
+- {{init}}: `true` if at least one is `true`, otherwise `false`.
+
+- {{privileged}}: `true` if at least one is `true`, otherwise `false`.
+
+- {{capAdd}}: Union of all `capAdd` arrays without duplicates.
+
+- {{securityOpt}}: Union of all securityOpt arrays without duplicates.
+
+<p class=note>Check [=devcontainer.json=], [=devcontainer-feature.json=], and [=devcontainer.metadata=] if you're wondering which properties are allowed from which sources. For instance [=devcontainer.json=] may specify {{forwardPorts}}, but [=devcontainer-feature.json=] may not.</p>
+
+<div class=example>
+```json
+// devcontainer.json
+{
+  "dockerFile": "./Dockerfile",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.minimap.enabled": true
+      }
+    }
+  }
+}
+```
+
+```Dockerfile
+FROM ubuntu:latest
+LABEL "devcontainer.metadata"='{ "privileged": true }'
+```
+
+Merging those two dev container configuration sources will result in:
+
+```json
+{
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.minimap.enabled": true
+      }
+    }
+  },
+  "privileged": true
+}
+```
+</div>
+
+<!--
+████████ ████████    ███    ████████ ██     ██ ████████  ████████  ██████
+██       ██         ██ ██      ██    ██     ██ ██     ██ ██       ██    ██
+██       ██        ██   ██     ██    ██     ██ ██     ██ ██       ██
+██████   ██████   ██     ██    ██    ██     ██ ████████  ██████    ██████
+██       ██       █████████    ██    ██     ██ ██   ██   ██             ██
+██       ██       ██     ██    ██    ██     ██ ██    ██  ██       ██    ██
+██       ████████ ██     ██    ██     ███████  ██     ██ ████████  ██████
+-->
+
+# Dev container features # {#features}
+
+<dfn>Development container Features</dfn> are self-contained, shareable units of installation code and development container configuration. The name comes from the idea that referencing one of them allows you to quickly and easily add more tooling, runtime, or library “Features” into your development container for you or your collaborators to use.
+
+Feature metadata is captured by a [=devcontainer-feature.json=] file in the root folder of the feature.
+
+<p class=note>While Features may be installed on top of any base image, the implementation of a Feature might restrict it to a subset of possible base images. For example, some Features may be authored to work with a certain Linux distro (e.g. debian-based images that use the apt package manager).</p>
+
+A Feature is a self contained entity in a folder with at least a [=devcontainer-feature.json=] and `install.sh` entrypoint script. Additional files are permitted and are packaged along side the required files.
+
+<pre class=example>
+feature/
+├── devcontainer-feature.json
+├── install.sh
+├── my-file.txt
+└── hello-world.md
+</pre>
+
+## devcontainer-feature.json
+
+The <dfn>`devcontainer-feature.json`</dfn> file defines metadata about a given Feature. All properties are optional except for `id`, `version`, and `name`.
+
+<xmp class=idl>
+dictionary DevcontainerFeatureJSON {
+  required DOMString id;
+  required DOMString version;
+  required DOMString name;
+  DOMString description;
+  DOMString documentationURL;
+  DOMString licenseURL;
+  sequence<DOMString> keywords;
+  object options;
+  object containerEnv;
+  boolean privileged;
+  boolean init;
+  sequence<DOMString> capAdd;
+  sequence<DOMString> securityOpt;
+  DOMString entrypoint;
+  object customizations;
+  sequence<DOMString> installsAfter;
+  sequence<DOMString> legacyIds;
+  boolean deprecated;
+  object mounts;
+};
+</xmp>
+
+- {{id}}: Identifier of the Feature. Must be unique in the context of the repository where the Feature exists and must match the name of the directory where the devcontainer-feature.json resides.
+
+- {{version}}: The semantic version of the Feature (e.g., 1.0.0).
+
+- {{name}}: A "human-friendly" display name for the Feature.
+
+- {{description}}: Description of the Feature.
+
+- {{documentationURL}}: URL that points to the documentation of the Feature.
+
+- {{licenseURL}}: URL that points to the license of the Feature.
+
+- {{keywords}}: List of strings relevant to a user that would search for this definition/Feature.
+
+- {{options}}: A map of options that will be passed as environment variables to the execution of the script.
+
+- {{containerEnv}}: A set of name-value pairs that sets or overrides environment variables.
+
+- {{privileged}}: Sets privileged mode for the container (required by things like [docker-in-docker](https://github.com/devcontainers/features/tree/main/src/docker-in-docker)) when the feature is used.
+
+- {{init}}: Adds the tiny init process to the container (`--init`) when the Feature is used.
+
+- {{capAdd}}: Adds container capabilities when the Feature is used.
+
+- {{securityOpt}}: Sets container security options like updating the seccomp profile when the Feature is used.
+
+- {{entrypoint}}: Set if the feature requires an "entrypoint" script that should fire at container startup.
+
+- {{customizations}}: Product-specific properties, each namespace under customizations is treated as a separate set of properties. For each of these sets, the object is parsed, values are replaced while arrays are set as a union.
+
+- {{installsAfter}}: Array of IDs of Features (omitting a version tag) that should execute before this one. Allows control for Feature authors on soft dependencies between different Features.
+
+- {{legacyIds}}: Array of old IDs used to publish this Feature.
+
+    <p class=note>The property is useful for renaming a currently published Feature within a single namespace.</p>
+
+- {{deprecated}}: Indicates that the Feature is deprecated, and will not receive any further updates/support. This property is intended to be used by the supporting tools for highlighting Feature deprecation.
+
+- {{mounts}}: Defaults to unset. Cross-orchestrator way to add additional mounts to a container. Each value is an object that accepts the same values as the Docker CLI `--mount` flag. The Pre-defined devcontainerId variable may be referenced in the value.
+
+    <pre class=example highlight=json>
+    {
+      "mounts": [
+        {
+          "source": "dind-var-lib-docker",
+          "target": "/var/lib/docker",
+          "type": "volume"
+        }
+      ]
+    }
+    </pre>

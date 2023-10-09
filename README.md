@@ -18,6 +18,8 @@ bikeshed watch
 python -m http.server
 ```
 
+<sup>If you're on Linux you can use the `&` operator</sup>
+
 In VS Code you can click the <kbd>[|]</kbd> button in the terminal to split it
 into two.
 
