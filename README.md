@@ -8,6 +8,16 @@
   <img width="600" src="https://i.imgur.com/gGOKNZC.png" />
 </p>
 
+## Usage
+
+To use the JSON schema files:
+
+```jsonc
+{
+  "$schema": "https://devcontainers.org/spec/devcontainer.schema.json"
+}
+```
+
 ## Development
 
 To get started, make sure you have [Bikeshed] installed, then run these commands
